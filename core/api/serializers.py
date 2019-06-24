@@ -9,4 +9,5 @@ class PontoTuristicoSerializer(ModelSerializer):
                   'nome', 
                   'descricao',
                   'aprovado',
+                  'foto',
                  ]
