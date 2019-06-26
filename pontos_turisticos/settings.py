@@ -25,7 +25,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 #DEBUG = True
 
-ALLOWED_HOSTS = ['https://touristicpoints.herokuapp.com/ ', '127.0.0.1']
+ALLOWED_HOSTS = ['touristicpoints.herokuapp.com', '127.0.0.1']
 
 
 
