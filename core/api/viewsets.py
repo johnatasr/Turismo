@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 
 class PontoTuristicoViewSet(ModelViewSet):
 
-    #queryset = PontoTuristico.objects.all()
+    queryset = PontoTuristico.objects.all()
     serializer_class = PontoTuristicoSerializer
     filter_backends = [SearchFilter,]
     #permission_classes = (IsAuthenticated,)
