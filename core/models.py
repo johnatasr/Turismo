@@ -24,7 +24,7 @@ class PontoTuristico(models.Model):
         else:
             ap = 'Reprovado'
             desc = self.descricao
-        return '%s -- %s'%(ap,desc)
+        return '%s -- %s' % (ap, desc)
 
     def __str__(self):
         return self.nome

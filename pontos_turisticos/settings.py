@@ -20,11 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
+#SECRET_KEY= 'noy3w^e$2zd6b81sjc7v!@=0q+#oy)d6pgvxh=q#jb!r7(!9ep'
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
+#DEBUG = True
 
-ALLOWED_HOSTS = ['touristicpoints.herokuapp.com/', 'localhost:8000']
+ALLOWED_HOSTS = ['https://touristicpoints.herokuapp.com/ ', '127.0.0.1']
+
 
 
 # Application definition
@@ -40,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
 
-    
     'core',
     'atracoes',
     'comentarios',
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'pontos_turisticos.wsgi.application'
 
 default_dburl = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 
-DATABASES = { 'default': config('DATABASE_URL', default=default_dburl, cast=dburl), }
+DATABASES = {'default': config('DATABASE_URL', default=default_dburl, cast=dburl), }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -137,6 +138,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
     ],
 }
-
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
