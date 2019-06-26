@@ -3,16 +3,23 @@ from core.models import PontoTuristico
 from core.api.serializers import PontoTuristicoSerializer
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 
 class PontoTuristicoViewSet(ModelViewSet):
 
     #queryset = PontoTuristico.objects.all()
     serializer_class = PontoTuristicoSerializer
-    filter_backends = (SearchFilter,)
+    filter_backends = [SearchFilter,]
+    permission_classes = [IsAuthenticated,]
+    authentication_classes = [TokenAuthentication,
     search_fields = ('nome', 'descricao', 'endereco__linha1')
+<<<<<<< HEAD
     #lookup_field = ('nome')
+=======
+    lookup_field = 'nome'
+>>>>>>> 92a7e306de8fa5830c4d2db33fabf7fabfd2e845
 
     def get_queryset(self):
         id = self.request.query_params.get('id', None)
