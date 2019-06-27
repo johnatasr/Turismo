@@ -27,9 +27,8 @@ class PontoTuristicoSerializer(ModelSerializer):
                   'avaliacoes',
                   'comentarios',
                   'endereco',
-                  'descricao_completa',
-                  'aprovado_descricao'
-                 ]
+                  'descricao_completa'
+                ]
 
     def get_descricao_completa(self, obj):
-        return '%s -- %s' % (obj.nome , obj.descricao)
+        return '%s -- %s' % (obj.nome, obj.descricao)

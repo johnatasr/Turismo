@@ -5,14 +5,17 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class PontoTuristicoViewSet(ModelViewSet):
 
+
     queryset = PontoTuristico.objects.all()
     serializer_class = PontoTuristicoSerializer
     filter_backends = [SearchFilter,]
-    #permission_classes = (IsAuthenticated,)
+    default_filter_backends = [DjangoFilterBackend,]
+    permission_classes = (IsAuthenticated,)
     search_fields = ['nome', 'descricao', 'endereco__linha1']
     lookup_field = 'nome'
 
@@ -22,20 +25,20 @@ class PontoTuristicoViewSet(ModelViewSet):
         descricao = self.request.query_params.get('descricao', None)
         queryset = PontoTuristico.objects.all()
 
-        if id: 
+        if id:
             queryset = PontoTuristico.objects.filter(pk=id)
 
-        if nome:    
+        if nome:
             queryset.filter(nome__iexact=nome)
-        
-        if descricao: 
+
+        if descricao:
             queryset.filter(descricao__iexact=descricao)
 
         return queryset
 
     def list(self, request, *args, **kwargs):
         return super(PontoTuristicoViewSet, self).list(request, *args, **kwargs)
-    
+
     def create(self, request, *args, **kwargs):
         #return Response({ 'Hello': request.data['nome']})
         return super(PontoTuristicoViewSet, self).create(request, *args, **kwargs)
@@ -56,4 +59,3 @@ class PontoTuristicoViewSet(ModelViewSet):
     def denunciar(self, request, pk=None):
         pass
 
-# Install Django-filter package
