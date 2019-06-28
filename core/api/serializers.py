@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from core.models import PontoTuristico
+from atracoes.models import Atracao
 from atracoes.api.serializers import AtracaoSerializer
 from avaliacoes.api.serializers import AvaliacaoSerializer
 from comentarios.api.serializers import ComentarioSerializer
@@ -9,12 +10,14 @@ from rest_framework.fields import SerializerMethodField
 
 class PontoTuristicoSerializer(ModelSerializer):
 
-    atracoes = AtracaoSerializer(many=True)
-    avaliacoes = AvaliacaoSerializer(many=True)
+    atracoes = AtracaoSerializer(many=True, read_only=True)
+    avaliacoes = AvaliacaoSerializer(many=True, read_only=True)
     comentarios = ComentarioSerializer(many=True)
-    endereco = EnderecoSerializer()
+    endereco = EnderecoSerializer(read_only=True)
 
     descricao_completa = SerializerMethodField()
+
+    read_only_field = ('comentarios')
 
     class Meta:
         model = PontoTuristico
@@ -27,9 +30,21 @@ class PontoTuristicoSerializer(ModelSerializer):
                   'avaliacoes',
                   'comentarios',
                   'endereco',
-                  'descricao_completa',
-                  'aprovado_descricao'
-                 ]
+                  'descricao_completa'
+                ]
+
+    def cria_atracoes(self, atracoes, ponto):
+        for atracao in atracoes:
+            at = Atracao.objects.create(**atracao)
+            ponto.atracoes.add(at)
+
+    def create(self, validated_data):
+        atracoes = validated_data['atracoes']
+        del validated_data['atracoes']
+        ponto = PontoTuristico.objects.create(**validated_data)
+        self.cria_atracoes(atracoes, ponto)
+
+        return ponto
 
     def get_descricao_completa(self, obj):
-        return '%s -- %s' % (obj.nome , obj.descricao)
+        return '%s -- %s' % (obj.nome, obj.descricao)
