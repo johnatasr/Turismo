@@ -4,11 +4,12 @@ from comentarios.models import Comentario
 from avaliacoes.models import Avaliacao
 from enderecos.models import Endereco
 
+
 class Identificacao(models.Model):
-    num = models.DecimalField(max_digits=10, decimal_places=2)
+    num = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
-        return self.num
+        return str(self.num)
 
 
 class PontoTuristico(models.Model):

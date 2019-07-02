@@ -1,5 +1,5 @@
-from rest_framework.serializers import ModelSerializer
-from core.models import PontoTuristico
+from rest_framework.serializers import ModelSerializer, Serializer
+from core.models import PontoTuristico, Identificacao
 from atracoes.models import Atracao
 from enderecos.models import Endereco
 from avaliacoes.models import Avaliacao
@@ -10,13 +10,17 @@ from enderecos.api.serializers import EnderecoSerializer
 from rest_framework.fields import SerializerMethodField
 
 
-class PontoTuristicoSerializer(ModelSerializer):
+class IdentificaocaSerializer(Serializer):
+    class Meta :
+        model = Identificacao
+        fields = '__all__'
 
 
+class PontoTuristicoSerializer(Serializer):
     avaliacoes = AvaliacaoSerializer(many=True)
+    doc_iden = IdentificaocaSerializer()
     endereco = EnderecoSerializer()
     descricao_completa = SerializerMethodField()
-
     read_only_field = ('comentarios', 'atracoes')
 
     class Meta:
@@ -31,14 +35,9 @@ class PontoTuristicoSerializer(ModelSerializer):
                   'comentarios',
                   'endereco',
                   'descricao_completa',
-                  ''
-
+                  'identi'
                 ]
 
-    def cria_avaliacoes(selfs, avaliacoes, ponto ):
-        for avaliacao in avaliacoes:
-            av = Avaliacao.objects.create(**avaliacao)
-            ponto.avaliacoes.add(av)
 
     def cria_atracoes(self, atracoes, ponto):
         for atracao in atracoes:
@@ -55,12 +54,19 @@ class PontoTuristicoSerializer(ModelSerializer):
         endereco = validated_data['endereco']
         del validated_data['endereco']
 
-        ponto = PontoTuristico.objects.create(**validated_data)
-        self.cria_atracoes(atracoes, ponto)
-        self.cria_avaliacoes(avaliacoes, ponto)
+        doc = validated_data['identi]
+        del validated_data['identi']
 
+        ponto = PontoTuristico.objects.create(**validated_data)
+
+        self.cria_atracoes(atracoes, ponto)
+
+        doci = Identificacao.objects.create(**doc)
         end = Endereco.objects.create(**endereco)
+
+        ponto.avaliacoes.set(avaliacoes)
         ponto.endereco = end
+        ponto.identi = doci
 
         ponto.save()
 
