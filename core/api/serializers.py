@@ -10,14 +10,14 @@ from rest_framework.fields import SerializerMethodField
 
 class PontoTuristicoSerializer(ModelSerializer):
 
-    atracoes = AtracaoSerializer(many=True, read_only=True)
-    avaliacoes = AvaliacaoSerializer(many=True, read_only=True)
+    atracoes = AtracaoSerializer(many=True, read_only=False)
+    avaliacoes = AvaliacaoSerializer(many=True)
     comentarios = ComentarioSerializer(many=True)
     endereco = EnderecoSerializer(read_only=True)
 
     descricao_completa = SerializerMethodField()
 
-    read_only_field = ('comentarios')
+    read_only_field = ('comentarios', 'avalicoes', 'atracoes')
 
     class Meta:
         model = PontoTuristico
