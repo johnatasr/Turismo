@@ -5,6 +5,7 @@ class ComentarioSerializer(ModelSerializer):
     class Meta:
         model = Comentario
         fields = [
+            'id',
             'usuario',
             'descricao',
             'data',

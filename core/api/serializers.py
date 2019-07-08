@@ -3,25 +3,28 @@ from core.models import PontoTuristico, Identificacao
 from atracoes.models import Atracao
 from enderecos.models import Endereco
 from avaliacoes.models import Avaliacao
+from comentarios.models import Comentario
 from atracoes.api.serializers import AtracaoSerializer
 from avaliacoes.api.serializers import AvaliacaoSerializer
 from comentarios.api.serializers import ComentarioSerializer
 from enderecos.api.serializers import EnderecoSerializer
 from rest_framework.fields import SerializerMethodField
+from rest_framework.decorators import action
 
 
-class IdentificaocaSerializer(Serializer):
+class IdentificaocaSerializer(ModelSerializer):
     class Meta :
         model = Identificacao
         fields = '__all__'
 
 
-class PontoTuristicoSerializer(Serializer):
+class PontoTuristicoSerializer(ModelSerializer):
     avaliacoes = AvaliacaoSerializer(many=True)
-    doc_iden = IdentificaocaSerializer()
+    identi = IdentificaocaSerializer()
     endereco = EnderecoSerializer()
+    atracoes = AtracaoSerializer(many=True)
     descricao_completa = SerializerMethodField()
-    read_only_field = ('comentarios', 'atracoes')
+    read_only_field = ('comentarios', 'avaliacoes')
 
     class Meta:
         model = PontoTuristico
@@ -49,12 +52,15 @@ class PontoTuristicoSerializer(Serializer):
         del validated_data['atracoes']
 
         avaliacoes = validated_data['avaliacoes']
-        del validated_data['validated_data']
+        del validated_data['avaliacoes']
+
+        comentarios = validated_data['comentarios']
+        del validated_data['comentarios']
 
         endereco = validated_data['endereco']
         del validated_data['endereco']
 
-        doc = validated_data['identi]
+        doc = validated_data['identi']
         del validated_data['identi']
 
         ponto = PontoTuristico.objects.create(**validated_data)
@@ -64,7 +70,9 @@ class PontoTuristicoSerializer(Serializer):
         doci = Identificacao.objects.create(**doc)
         end = Endereco.objects.create(**endereco)
 
+        ponto.comentarios.set(comentarios)
         ponto.avaliacoes.set(avaliacoes)
+
         ponto.endereco = end
         ponto.identi = doci
 
@@ -74,3 +82,5 @@ class PontoTuristicoSerializer(Serializer):
 
     def get_descricao_completa(self, obj):
         return '%s -- %s' % (obj.nome, obj.descricao)
+
+

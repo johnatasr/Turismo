@@ -6,6 +6,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
 
 
 class PontoTuristicoViewSet(ModelViewSet):
@@ -17,7 +18,7 @@ class PontoTuristicoViewSet(ModelViewSet):
     default_filter_backends = [DjangoFilterBackend,]
     #permission_classes = (IsAuthenticated,)
     search_fields = ['nome', 'descricao', 'endereco__linha1']
-    lookup_field = 'nome'
+    lookup_field = 'id'
 
     def get_queryset(self):
         id = self.request.query_params.get('id', None)
@@ -58,4 +59,17 @@ class PontoTuristicoViewSet(ModelViewSet):
     @action(methods=['get'], detail=True)
     def denunciar(self, request, pk=None):
         pass
+
+    @action(methods=['post'], detail=True)
+    def associa_atracoes(self, request, id):
+        atracoes = request.data['ids']
+
+        ponto = PontoTuristico.objects.get(id=id)
+        ponto.atracoes.set(atracoes)
+
+        ponto.save()
+
+        return HttpResponse('Ok')
+
+
 
