@@ -71,5 +71,3 @@ class PontoTuristicoViewSet(ModelViewSet):
 
         return HttpResponse('Ok')
 
-
-
