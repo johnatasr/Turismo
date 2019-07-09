@@ -1,6 +1,8 @@
-from rest_framework.serializers import ModelSerializer
-from core.models import PontoTuristico
+from rest_framework.serializers import ModelSerializer, Serializer
+from core.models import PontoTuristico, Identificacao
 from atracoes.models import Atracao
+from enderecos.models import Endereco
+from avaliacoes.models import Avaliacao
 from atracoes.api.serializers import AtracaoSerializer
 from avaliacoes.api.serializers import AvaliacaoSerializer
 from comentarios.api.serializers import ComentarioSerializer
@@ -8,16 +10,21 @@ from enderecos.api.serializers import EnderecoSerializer
 from rest_framework.fields import SerializerMethodField
 
 
+class IdentificaocaSerializer(ModelSerializer):
+    class Meta :
+        model = Identificacao
+        fields = '__all__'
+
+
 class PontoTuristicoSerializer(ModelSerializer):
 
-    atracoes = AtracaoSerializer(many=True, read_only=False)
-    avaliacoes = AvaliacaoSerializer(many=True)
-    comentarios = ComentarioSerializer(many=True)
-    endereco = EnderecoSerializer(read_only=True)
-
+    identi = IdentificaocaSerializer(read_only=True)
+    endereco = EnderecoSerializer()
+    atracoes = AtracaoSerializer(many=True)
     descricao_completa = SerializerMethodField()
 
-    read_only_field = ('comentarios', 'avalicoes', 'atracoes')
+
+    read_only_field = ('comentarios', )
 
     class Meta:
         model = PontoTuristico
@@ -30,8 +37,10 @@ class PontoTuristicoSerializer(ModelSerializer):
                   'avaliacoes',
                   'comentarios',
                   'endereco',
-                  'descricao_completa'
+                  'descricao_completa',
+                  'identi'
                 ]
+
 
     def cria_atracoes(self, atracoes, ponto):
         for atracao in atracoes:
@@ -41,8 +50,28 @@ class PontoTuristicoSerializer(ModelSerializer):
     def create(self, validated_data):
         atracoes = validated_data['atracoes']
         del validated_data['atracoes']
+
+        avaliacoes = validated_data['avaliacoes']
+        del validated_data['validated_data']
+
+        endereco = validated_data['endereco']
+        del validated_data['endereco']
+
+        doc = validated_data['identi']
+        del validated_data['identi']
+
         ponto = PontoTuristico.objects.create(**validated_data)
+
         self.cria_atracoes(atracoes, ponto)
+
+        doci = Identificacao.objects.create(**doc)
+        end = Endereco.objects.create(**endereco)
+
+        ponto.avaliacoes.set(avaliacoes)
+        ponto.endereco = end
+        ponto.identi = doci
+
+        ponto.save()
 
         return ponto
 
