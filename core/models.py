@@ -24,15 +24,15 @@ class PontoTuristico(models.Model):
     foto = models.ImageField(upload_to='pontos_turisticos', null=True, blank=True)
     identi = models.OneToOneField(Identificacao, on_delete=models.CASCADE, null=True, blank=True)
 
-    # @property
-    # def aprovado_descricao(self):
-    #     if self.aprovado == True:
-    #         ap = 'Aprovado'
-    #         desc = self.descricao
-    #     else:
-    #         ap = 'Reprovado'
-    #         desc = self.descricao
-    #     return '%s -- %s' % (ap, desc)
+    @property
+    def aprovado_descricao(self):
+        if self.aprovado == True:
+            ap = 'Aprovado'
+            desc = self.descricao
+        else:
+            ap = 'Reprovado'
+            desc = self.descricao
+        return '%s -- %s' % (ap, desc)
 
     def __str__(self):
-        return self.nome
+        return str(self.nome)
