@@ -11,4 +11,6 @@ class ComentariosViewSet(ModelViewSet):
     search_fields = ['data']
     lookup_field = 'id'
 
-
+# class CustomBrowsableAPIRenderer(BrowsableAPIRenderer):
+#     def get_default_renderer(self, view):
+#         return JSONRenderer()

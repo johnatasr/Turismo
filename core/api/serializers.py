@@ -20,13 +20,13 @@ class IdentificaocaSerializer(ModelSerializer):
 
 class PontoTuristicoSerializer(ModelSerializer):
 
-    # avaliacoes = AvaliacaoSerializer(many=True, read_only=True)
+    avaliacoes = AvaliacaoSerializer(many=True)
     identi = IdentificaocaSerializer()
     endereco = EnderecoSerializer()
     atracoes = AtracaoSerializer(many=True)
     comentarios = ComentarioSerializer(many=True)
     descricao_completa = SerializerMethodField()
-    read_only_field = ('avaliacoes', )
+    # read_only_field = ('avaliacoes', )
 
     class Meta:
         model = PontoTuristico
@@ -44,6 +44,12 @@ class PontoTuristicoSerializer(ModelSerializer):
                 ]
 
 
+    def cria_avaliacoes(self, avaliacoes, ponto):
+        for avaliacao in avaliacoes:
+            av = Avaliacao.objects.create(**avaliacao)
+            ponto.avaliacoes.add(av)
+
+
     def cria_atracoes(self, atracoes, ponto):
         for atracao in atracoes:
             at = Atracao.objects.create(**atracao)
@@ -53,8 +59,8 @@ class PontoTuristicoSerializer(ModelSerializer):
         atracoes = validated_data['atracoes']
         del validated_data['atracoes']
 
-        # avaliacoes = validated_data['avaliacoes']
-        # del validated_data['avaliacoes']
+        avaliacoes = validated_data['avaliacoes']
+        del validated_data['avaliacoes']
 
         comentarios = validated_data['comentarios']
         del validated_data['comentarios']
@@ -68,14 +74,15 @@ class PontoTuristicoSerializer(ModelSerializer):
         ponto = PontoTuristico.objects.create(**validated_data)
 
         self.cria_atracoes(atracoes, ponto)
+        self.cria_avaliacoes(avaliacoes, ponto)
 
         doci = Identificacao.objects.create(**doc)
+
         end = Endereco.objects.create(**endereco)
 
 
         ponto.comentarios.set(comentarios)
         # ponto.avaliacoes.set(avaliacoes)
-
         ponto.endereco = end
         ponto.identi = doci
 
